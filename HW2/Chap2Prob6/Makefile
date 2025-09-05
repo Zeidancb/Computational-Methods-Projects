@@ -1,8 +1,14 @@
-CXX = g++
+# Makefile
+CXX      = clang++        # or g++
 CXXFLAGS = -std=c++20 -Wall -Wextra -O2
 
-piFromArea: piFromArea.cpp
-	$(CXX) $(CXXFLAGS) -o piFromArea piFromArea.cpp
+# Build any "name" from "name.cpp"
+%: %.cpp
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+# "make" builds everything (all .cpp -> executables)
+all: $(patsubst %.cpp,%,$(wildcard *.cpp))
 
 clean:
-	rm -f piFromArea *~
+	rm -f $(patsubst %.cpp,%,$(wildcard *.cpp)) *~
+.PHONY: all clean
