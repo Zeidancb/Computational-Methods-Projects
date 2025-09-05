@@ -10,9 +10,6 @@
 //
 int main () {
 
-  // 1. Just print out the macro; (std::numbers::pi requires C++20)
-  std::cout << std::setprecision(16) << std::numbers::pi << std::endl;
-
   // 2. From the area of inner inscribed polygons.  Start
   //    with a hexagon and subdivide the arc into smaller
   //    pieces. Liu Hui(n=3072, 265 AD)  
@@ -30,8 +27,4 @@ int main () {
     x1=(x1+x0)/std::abs(x1+x0);
     nsides *=2; 
   }
-  
-  // 3. Take the logarithm of the imaginary number -1:
-  std::cout << std::setprecision(16) << imag(std::log(std::complex(-1.0))) << std::endl;
-  return 0;
 }
