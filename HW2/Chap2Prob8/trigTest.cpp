@@ -8,7 +8,7 @@
 // Program that tests multiple different trig identities 
 //between normal trig functions and hyperbolic trig functions
 //
-bool test1(std::complex<double> x) {
+bool testSinId(std::complex<double> x) {
     
     std::complex<double> i(0.0, 1.0);
 
@@ -17,7 +17,7 @@ bool test1(std::complex<double> x) {
     return testSin == testSinh;
 }
 
-bool test2(std::complex<double> x) {
+bool testCosId(std::complex<double> x) {
     
     std::complex<double> i(0.0, 1.0);
 
@@ -34,9 +34,24 @@ int main () {
     std::complex<double> test2(1.0, 0.0);
     std::complex<double> test3(0.0, 1.0);
     std::complex<double> test4(M_PI, M_PI);
-    std::complex<double> test5(M_PI_2, 0.0);
-    std::complex<double> test6(0.0, M_PI_2);
-    std::complex<double> test7(M_PI_2, M_PI_2);
 
+    std::cout << "x = " << test1
+    << "  test1: " << (testSinId(test1) ? "true" : "false")
+    << "  test2: " << (testCosId(test1) ? "true" : "false")
+    << std::endl;
 
+    std::cout << "x = " << test2
+    << "  test1: " << (testSinId(test2) ? "true" : "false")
+    << "  test2: " << (testCosId(test2) ? "true" : "false")
+    << std::endl;
+
+    std::cout << "x = " << test3
+    << "  test1: " << (testSinId(test3) ? "true" : "false")
+    << "  test2: " << (testCosId(test3) ? "true" : "false")
+    << std::endl;
+
+    std::cout << "x = " << test4
+    << "  test1: " << (testSinId(test4) ? "true" : "false")
+    << "  test2: " << (testCosId(test4) ? "true" : "false")
+    << std::endl;
 }
