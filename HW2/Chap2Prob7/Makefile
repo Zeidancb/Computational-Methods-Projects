@@ -1,5 +1,5 @@
 # Makefile
-CXX      = clang++        # or g++
+CXX      = g++        # or g++
 CXXFLAGS = -std=c++20 -Wall -Wextra -O2
 
 # Build any "name" from "name.cpp"
