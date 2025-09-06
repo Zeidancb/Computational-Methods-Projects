@@ -23,7 +23,7 @@ int main () {
     // Note that the base of the isosceles triangle makes up a single side
     // of the polygon, and hence A = n * A_t where A_t denotes the area 
     // of the single triangle
-    double area = 0.5 * std::fabs(std::imag(std::conj(x0) * x1));
+    double area = 0.5 * std::abs(std::imag(std::conj(x0) * x1));
     double approx= nsides * area;
     std::cout << "Sides " << nsides << "; approx=" << std::setprecision(16) << approx << std::endl;
 

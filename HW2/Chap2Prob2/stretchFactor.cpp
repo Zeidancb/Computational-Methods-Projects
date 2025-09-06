@@ -19,7 +19,7 @@ int main () {
         //Calculates gamma both ways
         double gamma1 = 1 / std::sqrt(1 - (beta * beta));
         double gamma2 = 1 / std::sqrt((2 - epsilon) * epsilon);
-        double fracError = std::fabs(gamma1 - gamma2) / std::fabs(gamma2);
+        double fracError = std::abs(gamma1 - gamma2) / std::abs(gamma2);
 
         //Prints the value of beta, stretch factor value, and the fractional error when comparing the two methods
         std::cout << "n = " << n << "  beta = " << std::setprecision(10) << beta << "  gamma1 = " << gamma1 << "  gamma2 = " << gamma2 << "  fracError = " << fracError << std::endl;
