@@ -30,7 +30,6 @@ int main (int argc, char * * argv) {
   int choice = 0;
   if (!(std::cin >> choice) || choice < 1 || choice > 7) {
     std::cerr << "Invalid choice; defaulting to 4 (e^{-x} sin x).\n";
-    // clean bad input state if any
     std::cin.clear();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     choice = 4;
