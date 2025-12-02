@@ -8,6 +8,7 @@
 !*.cpp
 !*.h
 !*.pro
+!*.png
 
 # keep the ignore file itself
 !.gitignore
