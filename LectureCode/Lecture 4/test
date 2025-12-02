@@ -1,0 +1,180 @@
+// SoQt includes
+#include <Inventor/Qt/SoQt.h>
+#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
+// Coin includes
+#include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/nodes/SoCube.h>
+#include <Inventor/nodes/SoCylinder.h>
+#include <Inventor/nodes/SoSphere.h>
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoTransform.h>
+#include <Inventor/nodes/SoLineSet.h>
+#include <Inventor/nodes/SoCoordinate3.h>
+#include <Inventor/nodes/SoGroup.h>
+#include <Inventor/nodes/SoBaseColor.h>
+#include <Inventor/sensors/SoTimerSensor.h>
+#include <Inventor/SbTime.h>
+#include <Inventor/nodes/SoSphere.h>
+#include <Inventor/nodes/SoCylinder.h>
+#include <Inventor/nodes/SoLineSet.h>
+#include <Inventor/nodes/SoCoordinate3.h>
+#include <Inventor/nodes/SoTranslation.h>
+// Inventor includes:
+#include <QApplication>
+#include <QWidget>
+//------------------------------------------------
+int main(int argc, char **argv)
+{
+
+  // Initialize the Qt system:
+  QApplication app(argc, argv);
+  
+  // Make a main window:
+  QWidget mainwin;
+  mainwin.resize(600, 600);
+
+  // Initialize SoQt 
+  SoQt::init(&mainwin);
+  
+  // The root of a scene graph
+  SoSeparator *root = new SoSeparator;
+  root->ref();
+
+  //---------------------------
+  // Materials
+  SoMaterial *metal = new SoMaterial;
+  metal->diffuseColor.setValue(0.8, 0.8, 0.8);
+  metal->specularColor.setValue(1, 1, 1);
+  metal->shininess = 0.9;
+  root->addChild(metal);
+
+  // Base
+  float baseCenterY = -1.0f;
+  float baseHalfH   = 0.1f; 
+  float baseTopY    = baseCenterY + baseHalfH;
+
+  {
+    SoSeparator *baseSep = new SoSeparator;
+    SoTransform *baseXf = new SoTransform;
+    baseXf->translation.setValue(0, baseCenterY, 0);
+    SoCube *base = new SoCube;
+    base->width  = 4.0f;
+    base->height = 0.2f;
+    base->depth  = 2.0f;
+    baseSep->addChild(baseXf);
+    baseSep->addChild(base);
+    root->addChild(baseSep);
+  }
+
+  // Vertical pillars
+  float pillarHeight = 2.0f;
+  float pillarOffsetX = 1.8f;
+  float pillarOffsetZ = 0.8f;
+
+  for (int i = 0; i < 4; i++) {
+    SoSeparator *pillarSep = new SoSeparator;
+    SoTransform *pillarXf = new SoTransform;
+    
+    pillarXf->translation.setValue(
+      (i < 2 ? -pillarOffsetX/2.0f : pillarOffsetX/2.0f),
+      baseTopY + pillarHeight/2.0f,
+      (i % 2 == 0 ? -pillarOffsetZ/2.0f : pillarOffsetZ/2.0f)
+    );
+    SoCylinder *pillar = new SoCylinder;
+    pillar->height = pillarHeight;
+    pillar->radius = 0.05f;
+    pillarSep->addChild(pillarXf);
+    pillarSep->addChild(pillar);
+    root->addChild(pillarSep);
+  }
+
+  // Horizontal bars
+  float barLength = 1.8f;
+  float barY = baseTopY + 0.90f * pillarHeight;
+
+  for (int i = 0; i < 2; i++) {
+    SoSeparator *barSep = new SoSeparator;
+    SoTransform *barXf = new SoTransform;
+    barXf->translation.setValue(
+      0.0f,
+      barY,
+      (i == 0 ? -pillarOffsetZ/2.0f : pillarOffsetZ/2.0f)
+    );
+    barXf->rotation.setValue(SbVec3f(0, 0, 1), M_PI_2);
+    SoCylinder *bar = new SoCylinder;
+    bar->height = barLength;
+    bar->radius = 0.04f;
+    barSep->addChild(barXf);
+    barSep->addChild(bar);
+    root->addChild(barSep);
+  }
+
+  // Balls and String
+  int   numBalls    = 4;
+  float ballRadius  = 0.12f;
+  float spacing     = 2.0f * ballRadius;
+  float yBallCenter = baseTopY + 0.20f * pillarHeight;
+
+  float zLeftBar  = -pillarOffsetZ/2.0f;
+  float zRightBar =  pillarOffsetZ/2.0f;
+
+  float topAnchorHalfSpread = 0.5f * ballRadius;
+
+  for (int i = 0; i < numBalls; i++) {
+    float xCenter = -((numBalls - 1) * spacing) / 2.0f + i * spacing;
+
+    // Left string
+    {
+      SoSeparator *stringSep = new SoSeparator;
+      SoCoordinate3 *coords = new SoCoordinate3;
+      coords->point.set1Value(0, xCenter - topAnchorHalfSpread, barY, zLeftBar);
+      coords->point.set1Value(1, xCenter, yBallCenter, 0.0f);
+      SoLineSet *line = new SoLineSet;
+      line->numVertices.set1Value(0, 2);
+      stringSep->addChild(coords);
+      stringSep->addChild(line);
+      root->addChild(stringSep);
+    }
+
+    // Right string
+    {
+      SoSeparator *stringSep = new SoSeparator;
+      SoCoordinate3 *coords = new SoCoordinate3;
+      coords->point.set1Value(0, xCenter + topAnchorHalfSpread, barY, zRightBar);
+      coords->point.set1Value(1, xCenter,                    yBallCenter, 0.0f);
+      SoLineSet *line = new SoLineSet;
+      line->numVertices.set1Value(0, 2);
+      stringSep->addChild(coords);
+      stringSep->addChild(line);
+      root->addChild(stringSep);
+    }
+
+    // Ball
+    {
+      SoSeparator *ballSep = new SoSeparator;
+      SoTransform *ballXf = new SoTransform;
+      ballXf->translation.setValue(xCenter, yBallCenter, 0.0f);
+      SoSphere *ball = new SoSphere;
+      ball->radius = ballRadius;
+      ballSep->addChild(ballXf);
+      ballSep->addChild(ball);
+      root->addChild(ballSep);
+    }
+  }
+  //---------------------------
+
+  // Initialize an examiner viewer:
+  SoQtExaminerViewer * eviewer = new SoQtExaminerViewer(&mainwin);
+  eviewer->setSceneGraph(root);
+  eviewer->show();
+  
+  // Pop up the main window.
+  SoQt::show(&mainwin);
+
+  // Loop until exit.
+  SoQt::mainLoop();
+
+  // Clean up resources.
+  delete eviewer;
+  root->unref();
+}
